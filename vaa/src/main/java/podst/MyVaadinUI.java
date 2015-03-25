@@ -4,6 +4,8 @@ import javax.servlet.annotation.WebServlet;
 
 import java.util.Date;
 
+import java.text.SimpleDateFormat;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
@@ -16,9 +18,11 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.RichTextArea;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.InlineDateField;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.shared.ui.label.ContentMode;
 import java.util.Locale;
 @Theme("mytheme")
 @SuppressWarnings("serial")
@@ -33,93 +37,70 @@ public class MyVaadinUI extends UI
     @Override
     protected void init(VaadinRequest request) {
     
-		
-    /*	final VerticalLayout layout = new VerticalLayout();
-		layout.setMargin(true);
-        settitle(layout);
-	    final Label label = new Label("Hello Vaadin user");
-         layout.addComponent(label);
-		 
-		  Panel panel = new Panel("Panel Containing a Label");
-		 panel.setWidth("200px"); // Defined width.
-         layout.addComponent(panel);
-        
-		 
-		Button button = new Button("Click Me");
-        button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-               label.setCaption("The time is " + new Date());
-            }
-        });
-        layout.addComponent(button);
- 
-        Table table = new Table("Shoes price list");
- 
-		  table.addContainerProperty("Brand", String.class, null);
-		  table.addContainerProperty("Colour", String.class, null);
-		  table.addContainerProperty("Price", Integer.class, null);
-		  /* Add a few items in the table. */
-    /*	  table.addItem(new Object[] {"A10 Timberland","Grey",100}, new Integer(1));
-		  table.addItem(new Object[] {"Harmont & Blain","Black",85}, new Integer(2));
-		  table.addItem(new Object[] {"Roy Rogers","Blue",50}, new Integer(3));
-		  table.addItem(new Object[] {"IceBerg","Grey",150}, new Integer(4));
-		
-		layout.addComponent(table);
-		
-       final Panel pa = new Panel("Panel Containing a Label");
-        layout.addComponent(pa);
-         final Label lab = new Label("Hello Vaadin user");
-pa.setWidth("300px");
-
-pa.setContent(lab);
-    final TextArea editor = new TextArea();
-    Button butt = new Button("Click Me");
-    layout.addComponent(butt);
-        butt.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                layout.addComponent(editor);
-                editor.setPropertyDataSource(lab);
-                editor.setImmediate(true);
-            }
-        });
-        
-        */
- 
+	
+	//Panel all = new Panel("");
+	//all.setSizeFull();
     VerticalLayout title = new VerticalLayout();
-    title.setMargin(true);
+   // all.addComponent(title);
+	title.setMargin(true);
 
-    title.setSizeFull(); 
+   // title.setSizeFull(); 
     setContent(title);   // add title
     title.addComponent(new Label("My blog"));
+	
         
     // Layout inside layout
     HorizontalLayout content = new HorizontalLayout();
-    // content.setSizeFull(); // Use all available space
-	content.setMargin(true);
+   
+	
     title.addComponent(content);
     // Left side
     VerticalLayout left = new VerticalLayout();
     content.addComponent(left);
-    InlineDateField date = new InlineDateField();
+	left.setMargin(true);
+    final InlineDateField date = new InlineDateField();
     date.setLocale(new Locale("pl", "PL"));
     left.addComponent(date);
+
         
         
     // Middle
-    VerticalLayout middle = new VerticalLayout();
+    final VerticalLayout middle = new VerticalLayout();
     content.addComponent(middle);
-    Button tab = new Button();
-    tab.setSizeFull();
-    middle.addComponent(tab);
-    // middle.setExpandRatio(tab, 1); // Expand to fill
-       
-       
-    title.setExpandRatio(content, 1); // Expand to fill
+	middle.setMargin(true);
+   
+	
+    final RichTextArea nNote = new RichTextArea("New note");
+	nNote.setValue("Add new note here.");
+	Button ok = new Button("OK");
+	final Label feedback = new Label((String) nNote.getValue()); 
+
+	 ok.addClickListener(new Button.ClickListener() {
+	       public void buttonClick(ClickEvent event) {
+	      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	      Date nowDate = new Date();
+	     
+		  middle.addComponent(new Label(dateFormat.format(nowDate)));
+		  middle.addComponent(new Label(nNote.getValue(),ContentMode.HTML));
+		  date.setValue(new java.util.Date());
+		 // date.setTime(new Date());
+		  }
+	 });
+	 
+
+	 
+     middle.addComponent(nNote);  
+
+	 middle.addComponent(ok);
+	middle.setSizeUndefined(); 
+
+	title.setExpandRatio(content, 1); // Expand to fill
+
         
     // Right
     final VerticalLayout right = new VerticalLayout();
     content.addComponent(right);
-       
+    right.setMargin(true);   
 
         
     final Panel about = new Panel("About Me");
