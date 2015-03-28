@@ -73,10 +73,8 @@ public class MyVaadinUI extends UI
 		
 		@Override
 		protected boolean isValidValue(String value) {
-			//
 			// Password must be at least 8 characters long and contain at least
 			// one number
-			//
 			if (value != null
 					&& (value.length() > 8 || !value.matches(".*\\d.*"))) {
 				return false;
@@ -116,7 +114,7 @@ public class MyVaadinUI extends UI
     content.addComponent(left);
 	left.setMargin(true);
 	
-    FormLayout loginLayout = new FormLayout();
+    final FormLayout loginLayout = new FormLayout();
 	final TextField usernameField = new TextField("Username");
 	usernameField.setRequired(true);
 	usernameField.setInputPrompt("Your username (eg. admin)");
@@ -126,6 +124,7 @@ public class MyVaadinUI extends UI
 	passwordField.setRequired(true);
 	final Label feedbackLabel = new Label();
 	Button loginButton = new Button("Login");
+	final Button logoutButton = new Button("Logout");
 	
 	
 	
@@ -135,12 +134,14 @@ public class MyVaadinUI extends UI
 	 loginLayout.addComponent(usernameField);
 	 loginLayout.addComponent(passwordField);
 	 loginLayout.addComponent(loginButton);
+	 left.addComponent(logoutButton);
 	 left.addComponent(loginLayout);
+	 logoutButton.setVisible(false);
 	
     final InlineDateField date = new InlineDateField();
     date.setLocale(new Locale("pl", "PL"));
     left.addComponent(date);
-
+    
         
         
     // Middle
@@ -151,7 +152,7 @@ public class MyVaadinUI extends UI
 	
     final RichTextArea nNote = new RichTextArea("New note");
 	nNote.setValue("Add new note here.");
-	Button ok = new Button("OK");
+	final Button ok = new Button("OK");
 	final Label feedback = new Label((String) nNote.getValue()); 
 
 	 ok.addClickListener(new Button.ClickListener() {
@@ -161,25 +162,20 @@ public class MyVaadinUI extends UI
 	     
 		  middle.addComponent(new Label(dateFormat.format(nowDate)));
 		  middle.addComponent(new Label(nNote.getValue(),ContentMode.HTML));
+		  middle.addComponent(new Label("Author: " + usernameField.getValue())); 
 		  date.setValue(new java.util.Date());
 		 // date.setTime(new Date());
 		  }
 	 });
 	 
 
- nNote.setWidth("-1px");
+ 
      middle.addComponent(nNote);  
      nNote.setVisible(false);
 	 middle.addComponent(ok);
 	 ok.setVisible(false);
-	middle.setWidth("700px"); 
+	middle.setWidth("600px"); 
 
-
-    
-
-	
-	
-	
 	title.setExpandRatio(content, 1); // Expand to fill
 
         
@@ -193,10 +189,12 @@ public class MyVaadinUI extends UI
     right.addComponent(about);
     final Label lab = new Label("Hello. My name is...");
     about.setWidth("300px");
-
+	
     about.setContent(lab);
     final TextArea editor = new TextArea();
-    Button butt = new Button("Edit");
+    final Button butt = new Button("Edit");
+	butt.setVisible(false);
+
     right.addComponent(butt);
     butt.addClickListener(new Button.ClickListener() {
             public void buttonClick(ClickEvent event) {
@@ -227,16 +225,31 @@ public class MyVaadinUI extends UI
 			// Store the current user in the service session
 			getSession().setAttribute("user", username);
             feedbackLabel.setValue("LoggedIn");
+			 nNote.setVisible(true);
+			 ok.setVisible(true);
+			 loginLayout.setVisible(false);
+			 butt.setVisible(true);
+			 logoutButton.setVisible(true);
+             
 			
 
 
 		} else {
 
 			passwordField.setValue(null);
-			passwordField.focus();
+			passwordField.focus();			
 		}
     	}
 	});	
-       
+   logoutButton.addClickListener(new Button.ClickListener() {
+	       public void buttonClick(ClickEvent event) {
+		   getSession().setAttribute("user", null);
+		   nNote.setVisible(false);
+			 ok.setVisible(false);
+			 loginLayout.setVisible(true);
+			 butt.setVisible(false);
+			 logoutButton.setVisible(false);
+           }
+		});
 }
 }
